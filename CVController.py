@@ -93,7 +93,7 @@ class CVController:
 		else:
 			# TODO: add picamera capture here!
 			camera = picamera.PiCamera()
-			camera.capture()                                   
+			camera.capture(capture_path)                                   
 			pass
 
 	def writeData(self, offset, orientation, angle):
