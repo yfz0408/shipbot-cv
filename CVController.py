@@ -26,6 +26,7 @@ class CVController:
 			file.close()
 		print ("Sync acquired.")
 		self.writeData(0, 0, 0)
+		camera = picamera.PiCamera()
 
 	def isActive(self):
 		return not self.killed
@@ -92,8 +93,7 @@ class CVController:
 			return
 		else:
 			# TODO: add picamera capture here!
-			camera = picamera.PiCamera()
-			camera.capture(capture_path)                                   
+			self.camera.capture(self.capture_path,format = 'jpeg')                                   
 			pass
 
 	def writeData(self, offset, orientation, angle):
