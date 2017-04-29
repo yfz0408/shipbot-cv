@@ -16,58 +16,60 @@ class CVController:
 	killed = False
 
 	def __init__(self):
-		print ("Awaiting sync...")
-		synced = False
-		while not synced:
-			file = open(self.data_path, 'r')
-			for line in file:
-				if "NO DATA" in line:
-					synced = True
-			file.close()
-		print ("Sync acquired.")
-		self.writeData(0, 0, 0)
+#		print ("Awaiting sync...")
+# 		synced = False
+# 		while not synced:
+# 			file = open(self.data_path, 'r')
+# 			for line in file:
+# 				if "NO DATA" in line:
+# 					synced = True
+# 			file.close()
+# 		print ("Sync acquired.")
+# 		self.writeData(0, 0, 0)
 		camera = picamera.PiCamera()
 
 	def isActive(self):
 		return not self.killed
 
 	def processCommand(self):
-		print ("Awaiting command...")
-		cmd_recieved = False
-		device_code = 0
-		while not cmd_recieved:
-			file = open(self.data_path, 'r')
-			for line in file:
-				if "@ 1" in line:
-					cmd_recieved = True
-				if cmd_recieved:
-					if "STOP" in line:
-						self.killed = True
-					else:
-						(key, value) = line.split(' ')
-						if "DEVICE" in key:
-							device_code = int(value.strip('\n'))
-			file.close()
+		device_code = raw_input("Device Type: ")
+#		print ("Awaiting command...")
+#		cmd_recieved = False
+# 		device_code = 0
+# 		while not cmd_recieved:
+# 			file = open(self.data_path, 'r')
+# 			for line in file:
+# 				if "@ 1" in line:
+# 					cmd_recieved = True
+# 				if cmd_recieved:
+# 					if "STOP" in line:
+# 						self.killed = True
+# 					else:
+# 						(key, value) = line.split(' ')
+# 						if "DEVICE" in key:
+# 							device_code = int(value.strip('\n'))
+# 			file.close()
 
-		if self.killed:
-			print ("Recieved stop.")
-			return
+# 		if self.killed:
+# 			print ("Recieved stop.")
+# 			return
 			
 		# Case on extracted device code!
-		if (device_code == 1):
+		if (device_code == "V1"):
 			# device type: valve small
 			device = ValveSmall()
-		elif (device_code == 2):
+		elif (device_code == "V2"):
 			# device is large valve
 			device = ValveLarge()
-		elif (device_code == 3):
+		elif (device_code == "V4"):
 			# device is shuttlecock
 			device = Shuttlecock()
-		elif (device_code == 4):
+		elif (device_code == "B"):
 			# device is breaker box
 			device = BreakerBox()
 		else:
 			# device code is unrecognized or 0
+			self.killed = true
 			return
 
 		if USE_CAMERA:
@@ -80,12 +82,13 @@ class CVController:
 
 		if not retval:
 			print ("Detect FAILED!")
-			self.writeData(0,0,0)
+			#self.writeData(0,0,0)
 			return
 		else:
 			print ("Successful detection!")
 			(offset,orient,angle) = retval
-			self.writeData(offset,orient,angle)
+			print(offset+orient+angle)
+			#self.writeData(offset,orient,angle)
 			return
 
 	def capture(self):
