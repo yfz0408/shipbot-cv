@@ -1,4 +1,5 @@
 from DeviceRecognition import *
+import picamera
 
 # static flag to enable picamera code
 USE_CAMERA = False
@@ -91,6 +92,8 @@ class CVController:
 			return
 		else:
 			# TODO: add picamera capture here!
+			camera = picamera.PiCamera()
+			camera.capture()                                   
 			pass
 
 	def writeData(self, offset, orientation, angle):
