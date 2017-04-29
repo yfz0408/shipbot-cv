@@ -4,10 +4,10 @@ import numpy as np
 # Device orientation codes, defined in shipbot.hardware.CVSensing
 # - ORIENT_UP: device needs to be engaged vertically
 # - ORIENT_SIDE: device needs to be engaged horizontally
-ORIENT_UP = 0
-ORIENT_SIDE = 1
+ORIENT_UP = "H"
+ORIENT_SIDE = "V"
 
-
+Factor = 0.4375
 ROBOTAXIS = 600
 
 # Detects a shuttlecock device (front-facing only!)
@@ -98,7 +98,7 @@ class Shuttlecock:
 
 					print ("Detected shuttlecock at {orient} deg.".format(orient=orient))
 					print ("Horizontal offset: " + str(x_offset))
-					return ( int(x_offset), orient, int(theta-90) )
+					return ( int(x_offset*Factor), orient, int(theta-90) )
 
 class BreakerBox:
 	# HSB Color Range (Valve)
@@ -246,7 +246,7 @@ class ValveSmall:
 						#cv2.imshow("image", image)
 						#cv2.waitKey(0)
 						#cv2.destroyAllWindows()
-						return ( int(x_offset * .4375), orient, int(theta) )
+						return ( int(x_offset * Factor), orient, int(theta) )
 		return False
 
 
@@ -282,17 +282,17 @@ class ValveLarge:
 
 	def inRange(self, area, ratio):
 		if (area < self.area_min):
-			print (" * Bad Area: " + str(area))
+			#print (" * Bad Area: " + str(area))
 			return (False, None)
 		if ratio > 1.5:
 			if (ratio > self.rp_max or ratio < self.rp_min):
-				print (" * Bad Ratio: " + str(ratio))
+				#print (" * Bad Ratio: " + str(ratio))
 				return (False, None)
 			else:
 				return (True, ORIENT_SIDE)
 		else:
 			if (ratio > self.rf_max or ratio < self.rf_min):
-				print (" * Bad Ratio: " + str(ratio))
+				#print (" * Bad Ratio: " + str(ratio))
 				return (False, None)
 			else:
 				return (True, ORIENT_UP)
@@ -341,8 +341,6 @@ class ValveLarge:
 		rad = np.arctan2(x,y)
 		deg = np.degrees(rad)
 		deg = deg-90
-  		print(point[0])
-    		print(point[1])
   		if (deg<0):
 			deg = deg+360   
 		return deg
@@ -386,7 +384,7 @@ class ValveLarge:
 					#cv2.imshow("image", image)
 					#cv2.waitKey(0)
 					#cv2.destroyAllWindows()
-					return ( int(x_offset * .4375), orient, int(theta) )
+					return ( int(x_offset * Factor), orient, int(theta) )
 
 
 		#cv2.imshow("image", image)
