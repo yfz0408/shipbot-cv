@@ -246,7 +246,7 @@ class ValveSmall:
 						#cv2.imshow("image", image)
 						#cv2.waitKey(0)
 						#cv2.destroyAllWindows()
-						return ( int(x_offset * .66), orient, int(theta) )
+						return ( int(x_offset * .4375), orient, int(theta) )
 		return False
 
 
@@ -386,7 +386,7 @@ class ValveLarge:
 					#cv2.imshow("image", image)
 					#cv2.waitKey(0)
 					#cv2.destroyAllWindows()
-					return ( int(x_offset * .66), orient, int(theta) )
+					return ( int(x_offset * .4375), orient, int(theta) )
 
 
 		#cv2.imshow("image", image)
