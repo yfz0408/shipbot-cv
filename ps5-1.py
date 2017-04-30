@@ -19,18 +19,18 @@ import matplotlib.pyplot as plt
 
 cv2plt = lambda image: image[::1, ::1, ::-1]
 
-def getch():
-  import sys, tty, termios
-  old_settings = termios.tcgetattr(0)
-  new_settings = old_settings[:]
-  new_settings[3] &= ~termios.ICANON
-  try:
-    termios.tcsetattr(0, termios.TCSANOW, new_settings)
-    ch = sys.stdin.read(1)
-  finally:
-    termios.tcsetattr(0, termios.TCSANOW, old_settings)
-  return ch
-
+#def getch():
+#  import sys, tty, termios
+#  old_settings = termios.tcgetattr(0)
+#  new_settings = old_settings[:]
+#  new_settings[3] &= ~termios.ICANON
+#  try:
+#    termios.tcsetattr(0, termios.TCSANOW, new_settings)
+#    ch = sys.stdin.read(1)
+#  finally:
+#    termios.tcsetattr(0, termios.TCSANOW, old_settings)
+#  return ch
+#
 
 
 
@@ -44,12 +44,19 @@ def findColors(image):
     
 #    lower_red = np.array([0, 120, 120])
 #    upper_red = np.array([50,255,180])
-    lower_blue = np.array([0,100,100])
-    upper_blue = np.array([40,255, 255])
-    #lower_blue = np.array([100,105,105])
-    #upper_blue = np.array([135,255, 255])
-    lower_green = np.array([35,55,55])
-    upper_green = np.array([50,255,255])
+#    lower_blue = np.array([0,140,140])
+#    upper_blue = np.array([80,255, 255])
+    lower_blue = np.array([100,105,105])
+    upper_blue = np.array([135,255, 255])
+    lower_green = np.array([30,55,55])
+    upper_green = np.array([60,255,255])
+    
+    height,width = image.shape[:2]
+    
+    maskroi = np.zeros((height,width), np.uint8)
+    myROI = [(600,200),(600,1000),(1600,1000),(1600, 200)]
+    cv2.fillPoly(maskroi,[np.array(myROI)],255)         
+    image = cv2.bitwise_and(image, image,mask=maskroi)
     
     blue_threshed = cv2.inRange(image, lower_blue, upper_blue)
     imgray = blue_threshed
@@ -73,7 +80,7 @@ def findColors(image):
     
     for contour in contoursblue:
         area = cv2.contourArea(contour)
-        #print(area)
+        print(area)
         if (area>1000):
             #rect = cv2.minAreaRect(contour)
             #center,dim, angle = rect
@@ -93,7 +100,7 @@ def findColors(image):
 #    
     for contour in contoursgreen:
         area = cv2.contourArea(contour)
-        print(area)
+        #print(area)
         if (area>80):
             #rect = cv2.minAreaRect(contour)
             #center,dim, angle = rect
@@ -110,12 +117,9 @@ def findColors(image):
 #            cv2.rectangle(image,(x,y),(x+w,y+h), (0,0,255),2)
     return image, x, y, mx, my
 
-
     
     
-    
-    
-image = cv2.imread('cvimages/capture.jpg')
+image = cv2.imread('cvimages/image36.jpg')
 image,x, y, mx, my = findColors(image)
 print(mx-x)
 print(y-my)
@@ -124,6 +128,8 @@ angle = np.degrees(angle)
 angle = angle-90
 if (angle<0):
     angle = angle+360
+
+print(angle)
     
 plt.figure()
 plt.imshow(cv2plt(image))
