@@ -1,11 +1,11 @@
 from DeviceRecognition import *
-#import picamera
+import picamera
 
 # static flag to enable picamera code
 USE_CAMERA = False
 MOCK_IMG_PATH = "cvimages/image01.jpg"
 #MOCK_IMG_PATH = "imgs/shuttlecock_lowres.jpg"
-#capture_path = "imgs/capture.jpg"
+capture_path = "imgs/capture.jpg"
 
 def processCommand(device_code = "none"):
 	if device_code == "none":
@@ -49,8 +49,8 @@ def processCommand(device_code = "none"):
 print ("CV control running.")
 
 #intialization, only set up this once once
-#camera=picamera.PiCamera()
-#camera.resolution(1600,1200)
+camera=picamera.PiCamera()
+camera.resolution(1600,1200)
 
 #for example
 device_code = "V1"
