@@ -1,11 +1,11 @@
 from DeviceRecognition import *
-import picamera
+#import picamera
 
 # static flag to enable picamera code
-USE_CAMERA = True
-MOCK_IMG_PATH = "cvimages/image26.jpg"
+USE_CAMERA = False
+MOCK_IMG_PATH = "cvimages/image01.jpg"
 #MOCK_IMG_PATH = "imgs/shuttlecock_lowres.jpg"
-capture_path = "imgs/capture.jpg"
+#capture_path = "imgs/capture.jpg"
 
 def processCommand(device_code = "none"):
 	if device_code == "none":
@@ -37,7 +37,7 @@ def processCommand(device_code = "none"):
 	if not retval:
 		print ("Detect FAILED!")
 		#self.writeData(0,0,0)
-		return
+		return (0,0,0)
 	else:
 		print ("Successful detection!")
 		(offset,orient,angle) = retval
@@ -49,11 +49,12 @@ def processCommand(device_code = "none"):
 print ("CV control running.")
 
 #intialization, only set up this once once
-camera.picamera.PiCamera()
-#for example
-device_code = "V2"
+#camera=picamera.PiCamera()
+#camera.resolution(1600,1200)
 
-while 1:
-	offset, angle, orient = processCommand(device_code)
+#for example
+device_code = "V1"
+
+offset, angle, orient = processCommand(device_code)
  
 print ("CV control stopped.")

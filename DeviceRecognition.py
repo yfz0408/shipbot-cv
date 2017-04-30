@@ -117,8 +117,8 @@ class ValveSmall:
 	device_id = 1
 
 	# HSV Color Range (Marker)
-	mark_low = [ 45, 55, 55 ]
-	mark_high = [ 80, 255, 255 ]
+	mark_low = [ 30, 55, 55 ]
+	mark_high = [ 60, 255, 255 ]
 
 #	hsb_low = [ 100, 65, 65 ]
 #	hsb_high = [ 120, 200, 200 ]
@@ -126,17 +126,17 @@ class ValveSmall:
 #    lower_green = np.array([40,55,55])
 #    upper_green = np.array([80,255,255])
     
-	blue_low = [ 100, 105, 105 ]
+	blue_low = [ 80, 65, 65 ]
 	blue_high = [ 135, 255, 255 ]
 
 	area_max = 900000
 	area_min = 2000
 
-	rf_min = 0.89
-	rf_max = 1.2
+	rf_min = 0.5
+	rf_max = 1.5
 
-	rp_min = 1.89
-	rp_max = 2.10
+	rp_min = 1.8
+	rp_max = 3
 
 	def __init__(self):
 		self.np_low = np.array(self.blue_low, dtype="uint8")
@@ -173,6 +173,11 @@ class ValveSmall:
 		return True
 
 	def findMarker(self, image, hsv_image, bounds):
+		maskroi = np.zeros((1200,1600), np.uint8)
+		myROI = [(600,200),(600,1100),(1600,1100),(1600, 200)]
+		cv2.fillPoly(maskroi,[np.array(myROI)],255)         
+		hsv_image = cv2.bitwise_and(hsv_image, hsv_image,mask=maskroi)
+		
 		mask = cv2.inRange(hsv_image, self.mark_low, self.mark_high)
 		output = cv2.bitwise_and(hsv_image, hsv_image, mask = mask)
 		output_gray = cv2.cvtColor(output,cv2.COLOR_BGR2GRAY)
@@ -186,19 +191,23 @@ class ValveSmall:
 		img, contours, hierarchy = cv2.findContours(closed_thresh, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 		for cnt in contours:
 			area = cv2.contourArea(cnt)
-			print(area)
+			#print(area)
 			if (area>10):
 				rect = cv2.minAreaRect(cnt)
 				center,dim, angle = rect
 #				if self.inBounds(bounds, rect) and (dim[0] > 0 and dim[1] > 0):
 #					box = cv2.boxPoints(rect)
 #					box = np.int0(box)
-#                        #cv2.drawContours(image,[box],0,(0,255,0),3)
+				#cv2.drawContours(image,rect,0,(0,255,0),3)
 				return center
 		return (-1, -1)
 	def calculateAngle(self, center, point):
 		x = point[0] - center[0]
 		y = center[1] - point[1] 
+		print(point[0])
+  		print(point[1])
+		print(center[0])
+  		print(center[1])
 		rad = np.arctan2(x,y)
 		deg = np.degrees(rad)
 		deg = deg-90
@@ -221,16 +230,19 @@ class ValveSmall:
 		ret,thresh = cv2.threshold(output_gray, 15, 255, cv2.THRESH_BINARY)
 
 		# close any holes
-		kernel = np.ones((5,5),np.uint8)
-		closed_thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+#		kernel = np.ones((5,5),np.uint8)
+#		closed_thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 		
 		# find the contours
-		img, contours, hierarchy = cv2.findContours(closed_thresh, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+		img, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 		
 		for cnt in contours:
-			if len(cnt) > 4:
+			area = cv2.contourArea(cnt)
+   			#print(area)
+			if (area>2000):
 				ellipse = cv2.fitEllipse(cnt)
 				center,dim, angle = ellipse
+				#print(dim)
 				if (dim[0] > 0 and dim[1] > 0):
 					area = dim[0] * dim[1]
 					ratio = dim[1] / dim[0]
@@ -243,9 +255,9 @@ class ValveSmall:
 						print ("Detected small valve!")
 						print (" - Horizontal offset: " + str(x_offset))
 						print (" - Angle: " + str(theta))
-						#cv2.imshow("image", image)
-						#cv2.waitKey(0)
-						#cv2.destroyAllWindows()
+						cv2.imshow("image", image)
+						cv2.waitKey(0)
+						cv2.destroyAllWindows()
 						return ( int(x_offset * Factor), orient, int(theta) )
 		return False
 
@@ -259,7 +271,7 @@ class ValveLarge:
 
 	# HSB Color Range (Valve)
 	hsb_low = [ 0, 140, 140 ]
-	hsb_high = [ 18, 200, 255 ]
+	hsb_high = [ 80, 200, 255 ]
 
 	# HSV Color Range (Marker)
 	mark_low = [ 35, 55, 55 ]
@@ -311,6 +323,11 @@ class ValveLarge:
 		return True
 
 	def findMarker(self, image, hsv_image, bounds):
+		maskroi = np.zeros((1200,1600), np.uint8)
+		myROI = [(600,200),(600,1100),(1600,1100),(1600, 200)]
+		cv2.fillPoly(maskroi,[np.array(myROI)],255)         
+		hsv_image = cv2.bitwise_and(hsv_image, hsv_image,mask=maskroi)
+     
 		mask = cv2.inRange(hsv_image, self.mark_low, self.mark_high)
 		output = cv2.bitwise_and(hsv_image, hsv_image, mask = mask)
 		output_gray = cv2.cvtColor(output,cv2.COLOR_BGR2GRAY)
