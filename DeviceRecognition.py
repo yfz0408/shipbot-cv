@@ -96,15 +96,70 @@ class Shuttlecock:
 
 class BreakerBox:
 	# HSB Color Range (Valve)
-	hsb_low = [ 0, 150, 150 ]
-	hsb_high = [ 18, 200, 255 ]
+	hsb_low = [ 0, 110, 90 ]
+	hsb_high = [ 30, 255, 255 ]
+ 
+	orient = ORIENT_SIDE
+	theta = 0     
+     
+	area_min = 1000
+	area_max = 3000
 	
 	def __init__(self):
-		self.thresh_low = np.array(self.hsb_low, dtype="uint8")
-		self.thresh_high = np.array(self.hsb_high, dtype="uint8")
+		self.np_low = np.array(self.hsb_low, dtype="uint8")
+		self.np_high = np.array(self.hsb_high, dtype="uint8")
 
+	def inRange(self, area):
+		if (area < self.area_min or area > self.area_max):
+			return False
+		else:
+			return True
+			
 	def processImage(self, path):
-		# TODO: implement this lolol
+		# load the image
+		image = cv2.imread(path)
+		hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+  
+          # masking non center area
+  		maskroi = np.zeros((1200,1600), np.uint8)
+		myROI = [(600,200),(600,1100),(1400,1100),(1400, 200)]
+		cv2.fillPoly(maskroi,[np.array(myROI)],255)         
+		hsv_image = cv2.bitwise_and(hsv_image, hsv_image,mask=maskroi)
+
+		# mask it for the desired color as a binary
+		mask = cv2.inRange(hsv_image, self.np_low, self.np_high)
+		output = cv2.bitwise_and(hsv_image, hsv_image, mask = mask)
+		output_gray = cv2.cvtColor(output,cv2.COLOR_BGR2GRAY)
+		ret,thresh = cv2.threshold(output_gray, 15, 255, cv2.THRESH_BINARY)
+		
+		# find the contours
+		#img, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+		contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+  
+		for cnt in contours:
+			x,y,w,h = cv2.boundingRect(cnt)
+			#rect = cv2.minAreaRect(cnt)
+			#corner, dim, angle = rect
+#			center = (corner[0] + (dim[0]/2), corner[1] + dim[1]/2)
+#			box = cv2.boxPoints(rect)
+#			box = np.int0(box)
+			# cv2.drawContours(image,[box],0,(255,0,0),1)
+#			if (dim[0] > 0 and dim[1] > 0):
+			#area = dim[0] * dim[1]
+			area = cv2.contourArea(cnt)
+			ret = self.inRange(area)
+			if (ret):
+#					box = cv2.boxPoints(rect) 
+#					box = np.int0(box)
+					#x_offset = ROBOTAXIS - center[1]
+     				x_offset = ROBOTAXIS - y
+         			x_offset = x_offset*DISTANCE_SCALE
+				print ("Detected Breaker!")
+				print (" - Horizontal offset: " + str(x_offset))
+					# cv2.imshow("image", image)
+					# cv2.waitKey(0)	
+					# cv2.destroyAllWindows()
+				return ( int(x_offset), self.orient, int(self.theta) )
 		return False
 
 class ValveSmall:
@@ -169,6 +224,8 @@ class ValveSmall:
 
 		# find the contours within bounds
 		img, contours, hierarchy = cv2.findContours(output_gray, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+		#contours, hierarchy = cv2.findContours(output_gray, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+  
 		for cnt in contours:
 			rect = cv2.minAreaRect(cnt)
 			corner, dim, angle = rect
@@ -202,6 +259,8 @@ class ValveSmall:
 		
 		# find the contours
 		img, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+#		contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+
 		
 		for cnt in contours:
 			rect = cv2.minAreaRect(cnt)
@@ -218,6 +277,7 @@ class ValveSmall:
 					box = cv2.boxPoints(rect)
 					box = np.int0(box)
 					x_offset = ROBOTAXIS - center[1]
+					x_offset = x_offset*DISTANCE_SCALE
 					# cv2.drawContours(image,[box],0,(0,0,255),3)
 					mark_center = self.findMarker(image, hsv_image, rect)
 					if not mark_center:
@@ -236,7 +296,7 @@ class ValveSmall:
 					# cv2.imshow("image", image)
 					# cv2.waitKey(0)	
 					# cv2.destroyAllWindows()
-					return ( int(x_offset * DISTANCE_SCALE), orient, int(theta) )
+					return ( int(x_offset), orient, int(theta) )
 		return False
 
 # Detects a large valve (orange!)
@@ -360,6 +420,7 @@ class ValveLarge:
 				ret,orient = self.inRange(area, ratio)
 				if (ret):
 					x_offset = ROBOTAXIS - center[1]
+     					x_offset = x_offset*DISTANCE_SCALE
 					#cv2.drawContours(image,[box],0,(0,0,255),3)
 					mark_center = self.findMarker(image, hsv_image, rect)
 					theta = self.calculateAngle(center, mark_center)
@@ -369,7 +430,7 @@ class ValveLarge:
 					#cv2.imshow("image", image)
 					#cv2.waitKey(0)
 					#cv2.destroyAllWindows()
-					return ( int(x_offset * Factor), orient, int(theta) )
+					return ( int(x_offset), orient, int(theta) )
 
 
 		#cv2.imshow("image", image)
