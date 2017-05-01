@@ -174,9 +174,9 @@ class ValveSmall:
 			corner, dim, angle = rect
 			box = cv2.boxPoints(rect)
 			box = np.int0(box)
-			cv2.drawContours(image,[box],0,(0,255,0),1)
+			#cv2.drawContours(image,[box],0,(0,255,0),1)
 			if self.inBounds(bounds, rect):
-				cv2.drawContours(image,[box],0,(0,255,0),4)
+				# cv2.drawContours(image,[box],0,(0,255,0),4)
 				center = (corner[0] + (dim[0]/2), corner[1] + dim[1]/2)
 				return center
 		return False
@@ -209,7 +209,7 @@ class ValveSmall:
 			center = (corner[0] + (dim[0]/2), corner[1] + dim[1]/2)
 			box = cv2.boxPoints(rect)
 			box = np.int0(box)
-			cv2.drawContours(image,[box],0,(255,0,0),1)
+			# cv2.drawContours(image,[box],0,(255,0,0),1)
 			if (dim[0] > 0 and dim[1] > 0):
 				area = dim[0] * dim[1]
 				ratio = dim[1] / dim[0]
@@ -218,15 +218,12 @@ class ValveSmall:
 					box = cv2.boxPoints(rect)
 					box = np.int0(box)
 					x_offset = ROBOTAXIS - center[1]
-					cv2.drawContours(image,[box],0,(0,0,255),3)
+					# cv2.drawContours(image,[box],0,(0,0,255),3)
 					mark_center = self.findMarker(image, hsv_image, rect)
 					if not mark_center:
 						print ("Didn't find mark!")
 						theta = 0
 					else:
-						print ("Box Angle: " + str(angle))
-						print ("Center: " + str(center))
-						print ("Mark: " + str(mark_center))
 						theta = self.calculateAngle(center, mark_center) - angle
 						if (theta < 0):
 							theta += 360
@@ -236,13 +233,10 @@ class ValveSmall:
 					print (" - Horizontal offset: " + str(x_offset))
 					print (" - Measured Angle: " + str(theta))
 					print (" - Orient: " + orient)
-					cv2.imshow("image", image)
-					cv2.waitKey(0)	
-					cv2.destroyAllWindows()
+					# cv2.imshow("image", image)
+					# cv2.waitKey(0)	
+					# cv2.destroyAllWindows()
 					return ( int(x_offset * DISTANCE_SCALE), orient, int(theta) )
-		cv2.imshow("image", image)
-		cv2.waitKey(0)	
-		cv2.destroyAllWindows()
 		return False
 
 # Detects a large valve (orange!)
