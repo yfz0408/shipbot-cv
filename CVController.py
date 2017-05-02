@@ -9,7 +9,7 @@ class CVController:
 		self.camera = picamera.PiCamera()
 
 	# Command should be V1, V2, V3, or B
-	def processCommand(device_code=None):
+	def processCommand(self, device_code=None):
 		# Case on extracted device code!
 		if (device_code is "V1"):
 			device = ValveSmall()
