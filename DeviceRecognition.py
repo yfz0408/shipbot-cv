@@ -4,7 +4,7 @@ import numpy as np
 ORIENT_UP = "H"
 ORIENT_SIDE = "V"
 
-DISTANCE_SCALE = 0.4375
+DISTANCE_SCALE = -0.4375
 ROBOTAXIS = 600
 
 # Detects a shuttlecock device (front-facing only!)
@@ -233,7 +233,7 @@ class BreakerBox:
                 # cv2.imshow("image", image)
                 # cv2.waitKey(0)
                 # cv2.destroyAllWindows()
-                return (int(x_offset), self.orient, int(self.theta))
+                return (int(x_offset), int(self.theta), self.orient)
         return False
 
 
@@ -265,7 +265,8 @@ class ValveSmall:
     def inRange(self, area, ratio):
         if (area < self.area_min):
             return (False, None)
-
+	
+	ratio = 1/ratio
         print("ratio was: " + str(ratio))
         if ratio < .75:
             if (ratio > self.rp_max or ratio < self.rp_min):
@@ -379,7 +380,7 @@ class ValveSmall:
                     # cv2.imshow("image", image)
                     # cv2.waitKey(0)
                     # cv2.destroyAllWindows()
-                    return (int(x_offset), orient, int(theta))
+                    return (int(x_offset), int(theta), orient)
         return False
 
 # Detects a large valve (orange!)
@@ -519,7 +520,7 @@ class ValveLarge:
                     #cv2.imshow("image", image)
                     # cv2.waitKey(0)
                     # cv2.destroyAllWindows()
-                    return (int(x_offset), orient, int(theta))
+                    return (int(x_offset), int(theta), orient)
 
         #cv2.imshow("image", image)
         # cv2.waitKey(0)

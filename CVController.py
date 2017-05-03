@@ -19,17 +19,18 @@ class CVController:
 		elif (device_code is "V3"):
 			# device is shuttlecock
 			device = Shuttlecock()
-		elif (device_code is "B"):
+		elif (device_code is "B" or device_code is "A"):
 			# device is breaker box
 			device = BreakerBox()
 		else:
 			print ("Unrecognized device code.")
-			return False
-
-		self.camera.capture(self.capture_path, format = 'jpeg')
+			return (0, 0, "V")
+		self.camera.resolution = (1600,1200)
+		self.camera.capture(self.capture_path, format='jpeg')
 		retval = device.processImage(self.capture_path)
 		if not retval:
 			print ("Detect FAILED!")
+			return (0, 0, "V")
 		else:
 			print ("Successful detection!")
 		return retval
