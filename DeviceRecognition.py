@@ -368,8 +368,7 @@ class ValveSmall:
                 area = cv2.contourArea(cnt)
                 ratio = dim[1] / dim[0]
                 ret, orient = self.inRange(area, ratio)
-                if (ret):
-
+                if (ret)
                     box = cv2.boxPoints(rect)
                     box = np.int0(box)
                     x_offset = ROBOTAXIS - center[1]
@@ -378,7 +377,7 @@ class ValveSmall:
                     mark_center = self.findMarker(image, hsv_image, rect)
                     if not mark_center:
                         print("Didn't find mark!")
-                        theta = 0
+                        return False
                     else:
                         theta = self.calculateAngle(center, mark_center)
 
@@ -439,7 +438,7 @@ class ValveLarge:
                 #print (" * Bad Ratio: " + str(ratio))
                 return (False, None)
             else:
-                return (True, ORIENT_UP)
+                return (True, ORIENT_SIDE)
 
     def inBounds(self, bounds, sel):
         (bound_x, bound_y) = bounds[0]
@@ -522,7 +521,12 @@ class ValveLarge:
                     x_offset = x_offset * DISTANCE_SCALE
                     # cv2.drawContours(image,[box],0,(0,0,255),3)
                     mark_center = self.findMarker(image, hsv_image, rect)
-                    theta = self.calculateAngle(center, mark_center)
+                    if not mark_center:
+                        print("Did not find marker")
+                        retur False
+                    else:
+                        theta = self.calculateAngle(center, mark_center)
+                        
                     print("Detected large valve!")
                     print(" - Horizontal offset: " + str(x_offset))
                     print(" - Angle: " + str(theta))
