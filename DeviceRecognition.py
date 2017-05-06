@@ -368,7 +368,7 @@ class ValveSmall:
                 area = cv2.contourArea(cnt)
                 ratio = dim[1] / dim[0]
                 ret, orient = self.inRange(area, ratio)
-                if (ret)
+                if (ret):
                     box = cv2.boxPoints(rect)
                     box = np.int0(box)
                     x_offset = ROBOTAXIS - center[1]
@@ -523,7 +523,7 @@ class ValveLarge:
                     mark_center = self.findMarker(image, hsv_image, rect)
                     if not mark_center:
                         print("Did not find marker")
-                        retur False
+                        return False
                     else:
                         theta = self.calculateAngle(center, mark_center)
                         
