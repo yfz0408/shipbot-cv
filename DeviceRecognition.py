@@ -191,7 +191,7 @@ class Shuttlecock:
 
 class BreakerBox:
     # HSB Color Range (Valve)
-    hsb_low = [0, 80, 120]
+    hsb_low = [0, 80, 140]
     hsb_high = [40, 255, 255]
 
     orient = ORIENT_SIDE
@@ -281,19 +281,12 @@ class ValveSmall:
     def inRange(self, area, ratio):
         if (area < self.area_min):
             return (False, None)
-	
-	ratio = 1/ratio
+
         print("ratio was: " + str(ratio))
-        if ratio < .75:
-            if (ratio > self.rp_max or ratio < self.rp_min):
-                return (False, None)
-            else:
-                return (True, ORIENT_UP)
+        if (ratio < 0.75 or ratio > 1.4):
+            return (True, ORIENT_UP)
         else:
-            if (ratio > self.rf_max or ratio < self.rf_min):
-                return (False, None)
-            else:
-                return (True, ORIENT_SIDE)
+            return (True, ORIENT_SIDE)
 
     def inBounds(self, bounds, sel):
         (bound_x, bound_y) = bounds[0]
