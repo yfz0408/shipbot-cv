@@ -28,18 +28,16 @@ class CVController:
         else:
             print("Unrecognized device code.")
             return (0, 0, "V")
-        self.camera.resolution = (1600, 1200)
-        self.camera.capture(self.capture_path, format='jpeg')
-        retval = device.processImage(self.capture_path)
         
         count = 0
         while count<10:
+            self.camera.capture(self.capture_path, format='jpeg')
+            retval = device.processImage(self.capture_path)
             if not retval:
                 print("Detect FAILED!")
             else:
                 print("Successful detection!")
-                return = return retval
-                break
+                return retval
             count = count+1
             time.sleep(1)     
         print("Detect timeout")    
