@@ -533,9 +533,9 @@ class ValveLarge:
                     print("Detected large valve!")
                     print(" - Horizontal offset: " + str(x_offset))
                     print(" - Angle: " + str(theta))
-                    cv2.imshow("image", image)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
+                    #cv2.imshow("image", image)
+                    # cv2.waitKey(0)
+                    # cv2.destroyAllWindows()
                     return (int(x_offset), int(theta), orient)
 
         #cv2.imshow("image", image)
