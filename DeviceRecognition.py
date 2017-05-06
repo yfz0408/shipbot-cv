@@ -242,6 +242,8 @@ class BreakerBox:
                 #                    box = cv2.boxPoints(rect)
                 #                    box = np.int0(box)
                     #x_offset = ROBOTAXIS - center[1]
+                x = x+w/2
+                y = y+h/2
                 x_offset = ROBOTAXIS - y
                 x_offset = x_offset * DISTANCE_SCALE
                 print("Detected Breaker!")
