@@ -1,7 +1,8 @@
-from DeviceRecognition import ValveSmall, Shuttlecock
+from DeviceRecognition import ValveSmall, ValveLarge, Shuttlecock
 
-path = "imgs/V3/V3_side_90_1.jpg"
+path = "imgs/V2/V2_ang_5.jpg"
 
-v = Shuttlecock()
+#v = Shuttlecock()
+v = ValveLarge()
 ret = v.processImage(path)
 print(ret)

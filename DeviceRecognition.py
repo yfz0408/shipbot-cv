@@ -405,8 +405,8 @@ class ValveLarge:
     hsb_high = [80, 255, 255]
 
     # HSV Color Range (Marker)
-    mark_low = [30, 40, 120]
-    mark_high = [80, 180, 255]
+    mark_low = [50, 60, 100]
+    mark_high = [76, 180, 255]
 
     area_min = 4000
 
@@ -470,8 +470,11 @@ class ValveLarge:
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if (area > 20):
+            if (area > 200):
                 rect = cv2.minAreaRect(cnt)
+                box = cv2.boxPoints(rect)
+                box = np.int0(box)
+                cv2.drawContours(image, [box], 0, (0, 255, 0), 3)
                 center, dim, angle = rect
                 return center
         return (-1, -1)
@@ -519,20 +522,20 @@ class ValveLarge:
                 if (ret):
                     x_offset = ROBOTAXIS - center[1]
                     x_offset = x_offset * DISTANCE_SCALE
-                    # cv2.drawContours(image,[box],0,(0,0,255),3)
+                    cv2.drawContours(image, [box], 0, (0, 0, 255), 3)
                     mark_center = self.findMarker(image, hsv_image, rect)
                     if not mark_center:
                         print("Did not find marker")
                         return False
                     else:
                         theta = self.calculateAngle(center, mark_center)
-                        
+
                     print("Detected large valve!")
                     print(" - Horizontal offset: " + str(x_offset))
                     print(" - Angle: " + str(theta))
-                    #cv2.imshow("image", image)
-                    # cv2.waitKey(0)
-                    # cv2.destroyAllWindows()
+                    cv2.imshow("image", image)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
                     return (int(x_offset), int(theta), orient)
 
         #cv2.imshow("image", image)
