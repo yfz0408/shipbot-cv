@@ -68,7 +68,8 @@ class Shuttlecock:
 #            thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if (area>2000):
+            if (area>2000):	
+		print(area)
                 x,y,w,h = cv2.boundingRect(cnt)
                 pipe_area = pipe_area + area
         
@@ -154,7 +155,7 @@ class BreakerBox:
     orient = ORIENT_SIDE
     theta = 0
 
-    area_min = 1000
+    area_min = 800
     area_max = 2000
     ratio_max = 1
 
@@ -218,7 +219,7 @@ class ValveSmall:
     mark_high = [70, 255, 255]
 
     # HSV Color Range (Valve)
-    blue_low = [100, 100, 100]
+    blue_low = [100, 100, 90]
     blue_high = [135, 255, 255]
 
     area_min = 2000
@@ -347,8 +348,8 @@ class ValveLarge:
     hsb_high = [80, 255, 255]
 
     # HSV Color Range (Marker)
-    mark_low = [50, 60, 100]
-    mark_high = [76, 180, 255]
+    mark_low = [30, 40, 120]
+    mark_high = [80, 180, 255]
 
     area_min = 4000
 
@@ -397,7 +398,7 @@ class ValveLarge:
 
     def findMarker(self, image, hsv_image, bounds):
         maskroi = np.zeros((1200, 1600), np.uint8)
-        myROI = [(600, 200), (600, 1100), (1600, 1100), (1600, 200)]
+        myROI = [(800, 200), (800, 1100), (1600, 1100), (1600, 200)]
         cv2.fillPoly(maskroi, [np.array(myROI)], 255)
         hsv_image = cv2.bitwise_and(hsv_image, hsv_image, mask=maskroi)
 
@@ -412,14 +413,15 @@ class ValveLarge:
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if (area > 200):
+            if (area > 100):
+		print(area)
                 rect = cv2.minAreaRect(cnt)
                 box = cv2.boxPoints(rect)
                 box = np.int0(box)
                 cv2.drawContours(image, [box], 0, (0, 255, 0), 3)
                 center, dim, angle = rect
                 return center
-        return (-1, -1)
+        return False
 
     def calculateAngle(self, center, point):
         x = point[0] - center[0]
@@ -438,10 +440,10 @@ class ValveLarge:
         img_center = (width / 2, height / 2)
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-        maskroi = np.zeros((1200, 1600), np.uint8)
-        myROI = [(600, 200), (600, 1100), (1600, 1100), (1600, 200)]
-        cv2.fillPoly(maskroi, [np.array(myROI)], 255)
-        hsv_image = cv2.bitwise_and(hsv_image, hsv_image, mask=maskroi)        
+        #maskroi = np.zeros((1200, 1600), np.uint8)
+        #myROI = [(600, 200), (600, 1100), (1600, 1100), (1600, 200)]
+        #cv2.fillPoly(maskroi, [np.array(myROI)], 255)
+        #hsv_image = cv2.bitwise_and(hsv_image, hsv_image, mask=maskroi)        
         
         # Mask out for desired color
         mask = cv2.inRange(hsv_image, self.thresh_low, self.thresh_high)
